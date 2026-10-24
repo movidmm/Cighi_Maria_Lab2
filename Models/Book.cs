@@ -21,5 +21,6 @@ namespace Cighi_Maria_Lab2.Models
 
         public int? AuthorsID { get; set; }
         public Authors? Authors { get; set; }
+        public ICollection<BookCategory>? BookCategories { get; set; }
     }
 }
