@@ -1,4 +1,3 @@
-
 @page "/"
 @model Cighi_Maria_Lab2.Pages.Books.IndexModel
 
@@ -12,14 +11,40 @@
     <a asp-page="Create">Create New</a>
 </p>
 
+
+<form method="get" action="/">
+    <div class="form-actions no-color">
+        <p>
+            Find by Book Title / Author Name:
+
+            <input type="text"
+                   name="searchString"
+                   value="@Model.CurrentFilter" />
+
+            <button type="submit" class="btn btn-primary">
+                Search
+            </button>
+
+            |
+
+            <a href="/">Back to full List</a>
+        </p>
+    </div>
+</form>
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.BookD.Books.First().Title)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.TitleSort">
+                    Book Title
+                </a>
             </th>
             <th>
-                Author
+                <a asp-page="./Index" asp-route-sortOrder="@Model.AuthorSort">
+                    Author
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BookD.Books.First().Price)
