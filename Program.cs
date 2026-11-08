@@ -1,8 +1,22 @@
-using Microsoft.EntityFrameworkCore;
-var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Cighi_Maria_Lab2Context") ?? throw new InvalidOperationException("Connection string 'Cighi_Maria_Lab2Context' not found.");
 
-builder.Services.AddDbContext<Cighi_Maria_Lab2Context>(options => options.UseSqlServer(connectionString));
+using Microsoft.EntityFrameworkCore;
+using Cighi_Maria_Lab2.Data;
+using Microsoft.AspNetCore.Identity;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("Cighi_Maria_Lab2Context") ?? throw new InvalidOperationException("Connection string 'Cighi_Maria_Lab2Context' not found.");
+var identityConnectionString = builder.Configuration.GetConnectionString("LibraryIdentityContext") ?? throw new InvalidOperationException("Connection string 'LibraryIdentityContext' not found.");
+
+builder.Services.AddDbContext<Cighi_Maria_Lab2Context>(options =>
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<LibraryIdentityContext>(options =>
+    options.UseSqlServer(identityConnectionString));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<LibraryIdentityContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -21,6 +35,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
