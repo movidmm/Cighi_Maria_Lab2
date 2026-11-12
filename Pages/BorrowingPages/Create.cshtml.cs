@@ -1,5 +1,7 @@
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cighi_Maria_Lab2.Models;
 
@@ -16,6 +18,18 @@ public class CreateModel : PageModel
 
     public IActionResult OnGet()
     {
+        var bookList = _context.Book
+            .Include(b => b.Authors)
+            .Select(x => new
+            {
+                x.ID,
+                BookFullName = x.Title + " - " + x.Authors.LastName + " " +
+                    x.Authors.FirstName
+            });
+
+        ViewData["BookID"] = new SelectList(bookList, "ID", "BookFullName");
+        ViewData["MemberID"] = new SelectList(_context.Member, "ID", "FullName");
+
         return Page();
     }
 

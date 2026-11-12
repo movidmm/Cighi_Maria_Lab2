@@ -1,21 +1,19 @@
 
-using Microsoft.EntityFrameworkCore;
 using Cighi_Maria_Lab2.Data;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("Cighi_Maria_Lab2Context") ?? throw new InvalidOperationException("Connection string 'Cighi_Maria_Lab2Context' not found.");
-var identityConnectionString = builder.Configuration.GetConnectionString("LibraryIdentityContext") ?? throw new InvalidOperationException("Connection string 'LibraryIdentityContext' not found.");
 
 builder.Services.AddDbContext<Cighi_Maria_Lab2Context>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<LibraryIdentityContext>(options =>
-    options.UseSqlServer(identityConnectionString));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-    options.SignIn.RequireConfirmedAccount = false)
+    options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<LibraryIdentityContext>();
 
 // Add services to the container.
