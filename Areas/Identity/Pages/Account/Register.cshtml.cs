@@ -118,6 +118,18 @@ public class RegisterModel : PageModel
 
             if (result.Succeeded)
             {
+                var role = await _userManager.AddToRoleAsync(user, "User");
+
+                if (!role.Succeeded)
+                {
+                    foreach (var error in role.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return Page();
+                }
+
                 var member = new Member
                 {
                     Email = Input.Email
@@ -131,6 +143,7 @@ public class RegisterModel : PageModel
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
@@ -157,7 +170,6 @@ public class RegisterModel : PageModel
             }
         }
 
-        // If we got this far, something failed, redisplay form
         return Page();
     }
 

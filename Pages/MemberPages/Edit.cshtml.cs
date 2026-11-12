@@ -1,7 +1,8 @@
+
+using Cighi_Maria_Lab2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Cighi_Maria_Lab2.Models;
 
 namespace Cighi_Maria_Lab2.Pages.MemberPages;
 
@@ -19,52 +20,51 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
-        if (id is null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var member = await _context.Member.FirstOrDefaultAsync(m => m.ID == id);
-        if (member is null)
+        var member = await _context.Member
+            .FirstOrDefaultAsync(m => m.ID == id);
+
+        if (member == null)
         {
             return NotFound();
         }
+
         Member = member;
         return Page();
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see https://aka.ms/RazorPagesCRUD.
-    public async Task<IActionResult> OnPostAsync()
+    public async Task<IActionResult> OnPostAsync(int? id)
     {
-        if (!ModelState.IsValid)
+        if (id == null)
         {
-            return Page();
+            return NotFound();
         }
 
-        _context.Attach(Member).State = EntityState.Modified;
+        var memberToUpdate = await _context.Member
+            .FirstOrDefaultAsync(m => m.ID == id);
 
-        try
+        if (memberToUpdate == null)
+        {
+            return NotFound();
+        }
+
+        if (await TryUpdateModelAsync<Member>(
+            memberToUpdate,
+            "Member",
+            m => m.FirstName,
+            m => m.LastName,
+            m => m.Adress,
+            m => m.Phone))
         {
             await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!MemberExists(Member.ID))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return RedirectToPage("./Index");
         }
 
-        return RedirectToPage("./Index");
-    }
-
-    private bool MemberExists(int id)
-    {
-        return _context.Member.Any(e => e.ID == id);
+        Member = memberToUpdate;
+        return Page();
     }
 }

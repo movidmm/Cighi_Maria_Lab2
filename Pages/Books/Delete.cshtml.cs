@@ -1,10 +1,13 @@
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Cighi_Maria_Lab2.Models;
 
-namespace Cighi_Maria_Lab2.Pages.BookPages;
+namespace Cighi_Maria_Lab2.Pages.Books;
 
+[Authorize(Roles = "Admin")]
 public class DeleteModel : PageModel
 {
     private readonly Cighi_Maria_Lab2Context _context;
@@ -27,6 +30,7 @@ public class DeleteModel : PageModel
         var book = await _context.Book
             .Include(b => b.Authors)
             .FirstOrDefaultAsync(m => m.ID == id);
+
         if (book is null)
         {
             return NotFound();
@@ -47,6 +51,7 @@ public class DeleteModel : PageModel
         }
 
         var book = await _context.Book.FindAsync(id);
+
         if (book != null)
         {
             Book = book;
